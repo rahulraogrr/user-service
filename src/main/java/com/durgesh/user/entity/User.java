@@ -6,7 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -43,15 +44,14 @@ public class User implements Serializable {
     @Column(name = "user_status", nullable = false)
     private UserStatus userStatus;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_birth", nullable = false)
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date createTs;
+    @Column(name = "create_ts", columnDefinition = "TIMESTAMP")
+    private ZonedDateTime createTs;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
-    private Date updateTs;
+    @Column(name = "update_ts", columnDefinition = "TIMESTAMP")
+    private ZonedDateTime updateTs;
 }
