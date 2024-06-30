@@ -1,20 +1,29 @@
 package com.durgesh.user.service.impl;
 
+import com.durgesh.user.dto.Hotel;
+import com.durgesh.user.dto.Rating;
 import com.durgesh.user.entity.User;
 import com.durgesh.user.exception.ResourceNotFoundException;
 import com.durgesh.user.repository.UserRepository;
 import com.durgesh.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
 
     @Override
     public User createUser(User user) {
@@ -28,8 +37,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(String userId) {
-        return userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(()-> new ResourceNotFoundException("User with id " + userId + " not found"));
+        User dbUser = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+        Rating[] userWithRating = restTemplate.getForObject("http://localhost:8083/api/v1/ratings/users/" + dbUser.getUserId(), Rating[].class);
+        List<Rating> ratings = Arrays.stream(userWithRating).toList();
+
+        ratings.forEach(rating -> rating.setHotel(restTemplate.getForObject("http://localhost:8082/api/v1/hotels/"+rating.getHotelId(), Hotel.class)));
+
+        dbUser.setRatings(ratings);
+        return dbUser;
     }
 
     @Override
