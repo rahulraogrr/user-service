@@ -1,5 +1,6 @@
 package com.durgesh.user.entity;
 
+import com.durgesh.user.dto.Rating;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -54,4 +57,7 @@ public class User implements Serializable {
     @UpdateTimestamp
     @Column(name = "update_ts", columnDefinition = "TIMESTAMP")
     private ZonedDateTime updateTs;
+
+    @Transient
+    private List<Rating> ratings = new ArrayList<>();
 }
