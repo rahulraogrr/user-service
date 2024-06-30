@@ -10,9 +10,7 @@ import com.durgesh.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +20,6 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate;
     private final HotelService hotelService;
     private final RateService rateService;
 
