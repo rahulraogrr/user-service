@@ -1,15 +1,14 @@
 package com.durgesh.user.service.impl;
 
-import com.durgesh.user.dto.Hotel;
 import com.durgesh.user.dto.Rating;
 import com.durgesh.user.entity.User;
 import com.durgesh.user.exception.ResourceNotFoundException;
+import com.durgesh.user.external.HotelService;
+import com.durgesh.user.external.RateService;
 import com.durgesh.user.repository.UserRepository;
 import com.durgesh.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +23,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    private final HotelService hotelService;
+    private final RateService rateService;
 
     @Override
     public User createUser(User user) {
@@ -39,10 +40,9 @@ public class UserServiceImpl implements UserService {
     public User getUserById(String userId) {
         User dbUser = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
-        Rating[] userWithRating = restTemplate.getForObject("http://RATING-SERVICE/api/v1/ratings/users/" + dbUser.getUserId(), Rating[].class);
-        List<Rating> ratings = Arrays.stream(userWithRating).toList();
 
-        ratings.forEach(rating -> rating.setHotel(restTemplate.getForObject("http://HOTEL-SERVICE/api/v1/hotels/"+rating.getHotelId(), Hotel.class)));
+        List<Rating> ratings = rateService.getRatingsByUserId(String.valueOf(dbUser.getUserId()));
+        ratings.forEach(rating -> rating.setHotel(hotelService.getHotelById(rating.getHotelId())));
 
         dbUser.setRatings(ratings);
         return dbUser;
