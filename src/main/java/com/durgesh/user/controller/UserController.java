@@ -34,4 +34,9 @@ public class UserController {
         userService.deleteUserById(id);
         return ResponseEntity.ok("User deleted successfully");
     }
+
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(user));
+    }
 }

@@ -37,4 +37,20 @@ public class UserServiceImpl implements UserService {
         userRepository.findById(UUID.fromString(userId))
                 .ifPresent(user -> userRepository.deleteById(UUID.fromString(String.valueOf(user.getUserId()))));
     }
+
+    @Override
+    public User updateUser(User user) {
+        User userToUpdate = getUserById(String.valueOf(user.getUserId()));
+        userToUpdate.setFirstName(user.getFirstName());
+        userToUpdate.setMiddleName(user.getMiddleName());
+        userToUpdate.setLastName(user.getLastName());
+        userToUpdate.setUserRole(user.getUserRole());
+        userToUpdate.setEmail(user.getEmail());
+        userToUpdate.setPhone(user.getPhone());
+        userToUpdate.setDateOfBirth(user.getDateOfBirth());
+        userToUpdate.setGender(user.getGender());
+        userToUpdate.setAbout(user.getAbout());
+        return userRepository.save(userToUpdate);
+    }
+
 }

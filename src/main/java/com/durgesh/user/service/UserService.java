@@ -10,4 +10,5 @@ public interface UserService {
     List<User> getAllUsers();
     User getUserById(String userId);
     void deleteUserById(String userId);
+    User updateUser(User user);
 }
